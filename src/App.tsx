@@ -13,7 +13,7 @@ function App() {
     address: "Ha noi",
     gender: "male"
   }
-  const toDos = ["todo1", "todo2", "todo3", "todo4", "todo5", "todo6"]
+
 
   return (
     <>
@@ -27,13 +27,14 @@ function App() {
         info={info}
         abc={"abs"}
       />
-      <ul>
+
+      {/* <ul>
         {toDos.map((item, index) => {
           return (
             <li key={index}  >{item}</li>
           )
         })}
-      </ul>
+      </ul> */}
 
       <div>
         {/* <MyFirstComponent />

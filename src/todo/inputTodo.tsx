@@ -1,3 +1,6 @@
+import { todo } from "node:test";
+import { useState } from "react";
+
 
 interface IProps {
     name: string,
@@ -8,20 +11,50 @@ interface IProps {
     }
     abc: string
 }
+
+
 const InputTodoComponent = (props: IProps) => {
-    console.log("check Props: ", props)
+
+    const [Todo, setTodo] = useState("");
+    const [ListTodo, setListTodo] = useState<string[]>([]);
+    const handleClick = () => {
+        if (Todo !== "") {
+            setListTodo([...ListTodo, Todo])
+            setTodo("")
+        }
+        else {
+            alert("Todo is empty");
+            return;
+        }
+
+    }
+    console.log(ListTodo)
     return (
-        <>
-            <div>name: = {JSON.stringify(props.name)}</div>
-            <div>age: = {JSON.stringify(props.age)}</div>
-            <div>Info: = {JSON.stringify(props.info)}</div>
+        <div style={{ border: "1px solid red" }}>
 
             <p>Add input todo</p>
-            <input type="text" name="" id="" />
+            <input type="text" name="" id="checks"
+                value={Todo}
+                onChange={(event) => {
+                    setTodo(event.target.value)
+                }} />
             &nbsp; &nbsp;
-            <button>save</button>
 
-        </>
+            <button onClick={() => {
+                handleClick()
+            }}>save</button>
+            <br />
+            <ul>
+                {
+                    ListTodo.map((item, index) => {
+                        return (
+                            <li key={index}>{item}</li>
+                        )
+                    })
+                }
+            </ul>
+        </div>
     )
+
 }
 export default InputTodoComponent;
