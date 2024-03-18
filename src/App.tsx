@@ -4,9 +4,11 @@
 // import './App.css'
 // import MyFirstComponent from './test/my.component'
 // import LeeComponent from './test/second.component'
+
+import { useState } from 'react';
 import InputTodoComponent from './todo/inputTodo'
 function App() {
-  // const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
   const name = "Lee";
   const age = 25;
   const info = {
@@ -14,10 +16,24 @@ function App() {
     gender: "male"
   }
 
+  const handleTest = (content: string) => {
+    alert(content);
+  }
+  const [ListTodo, setListTodo] = useState<string[]>([]);
+  const [Todo, setTodo] = useState("");
 
+
+
+  //React lifeCycle
+  //mounting:= born : phase 1
+  //DidUpdate:= update : phase 2
+  //WillUnmount:= delete : phase 3
   return (
     <>
-
+      <div>
+        <div>Count: {count}</div>
+        <button onClick={() => { setCount(count + 1) }}>click</button>
+      </div>
       <div className='parent'>
         <div className='child'></div>
       </div>
@@ -25,16 +41,22 @@ function App() {
         name={name}
         age={age}
         info={info}
-        abc={"abs"}
+        testFunction={handleTest}
+        ListTodo={ListTodo}
+        setListTodo={setListTodo}
+        Todo={Todo}
+        setTodo={setTodo}
       />
 
-      {/* <ul>
-        {toDos.map((item, index) => {
-          return (
-            <li key={index}  >{item}</li>
-          )
-        })}
-      </ul> */}
+      <ul>
+        {
+          ListTodo.map((item, index) => {
+            return (
+              <li key={index}>{item}</li>
+            )
+          })
+        }
+      </ul>
 
       <div>
         {/* <MyFirstComponent />

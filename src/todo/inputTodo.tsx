@@ -1,4 +1,3 @@
-import { todo } from "node:test";
 import { useState } from "react";
 
 
@@ -9,14 +8,18 @@ interface IProps {
         gender: string,
         address: string
     }
-    abc: string
+    testFunction: (name: string) => void;
+    ListTodo: string[];
+    setListTodo: (v: string[]) => void;
+    Todo: string;
+    setTodo: (v: string) => void;
 }
 
 
 const InputTodoComponent = (props: IProps) => {
-
+    const { ListTodo, setListTodo } = props;
     const [Todo, setTodo] = useState("");
-    const [ListTodo, setListTodo] = useState<string[]>([]);
+
     const handleClick = () => {
         if (Todo !== "") {
             setListTodo([...ListTodo, Todo])
@@ -44,15 +47,9 @@ const InputTodoComponent = (props: IProps) => {
                 handleClick()
             }}>save</button>
             <br />
-            <ul>
-                {
-                    ListTodo.map((item, index) => {
-                        return (
-                            <li key={index}>{item}</li>
-                        )
-                    })
-                }
-            </ul>
+
+
+            <button onClick={() => { props.testFunction(Todo) }}>test</button>
         </div>
     )
 
