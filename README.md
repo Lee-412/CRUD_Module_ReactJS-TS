@@ -1,5 +1,4 @@
-## React + TypeScript + Vite (Hỏi Dân IT)
-
+## React + TypeScript + Vite 
 Template này được sử dụng cho series React/Next.JS của tác giả Hỏi Dân IT (Eric)
 
 Các bước cần làm:
