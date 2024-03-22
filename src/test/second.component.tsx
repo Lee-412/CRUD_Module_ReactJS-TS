@@ -7,9 +7,6 @@ const LeeComponent = () => {
         name: "Lee",
         age: 19
     }
-
-
-
     //jsx = html + jsx => 1 block
     return (
         <div>
@@ -24,11 +21,7 @@ const LeeComponent = () => {
             }>
                 Hello {name}, age = {infor.age}
             </h1>
-            {/* <img
-                src="https://i.imgur.com/yXOvdOSs.jpg"
-                alt="Hedy Lamarr"
-                className="photo"
-            /> */}
+
             <ul>
                 <li>Invent new traffic lights </li>
                 <li>Rehearse a movie scene </li>

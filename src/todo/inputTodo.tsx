@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 
+// interface Props data from parent
 interface IProps {
     name: string,
     age: number,
@@ -15,7 +16,7 @@ interface IProps {
     setTodo: (v: string) => void;
 }
 
-
+// handle Input
 const InputTodoComponent = (props: IProps) => {
     const { ListTodo, setListTodo } = props;
     const [Todo, setTodo] = useState("");
