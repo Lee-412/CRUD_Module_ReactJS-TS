@@ -1,8 +1,12 @@
 import './App.scss'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import InputTodoComponent from './todo/inputTodo'
 
 function App() {
+
+
+
+
   const [count, setCount] = useState(0);
   const name = "Lee";
   const age = 25;

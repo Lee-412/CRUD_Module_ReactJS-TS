@@ -23,20 +23,25 @@ const UsersTable = () => {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
     const [dataUpdateUsers, setDataUpdateUser] = useState<null | Users>(null);
-    const access_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0b2tlbiBsb2dpbiIsImlzcyI6ImZyb20gc2VydmVyIiwiX2lkIjoiNjVmODQ0M2RiMDMyYmNiZjExYjgwNmMyIiwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJhZGRyZXNzIjoiVmlldE5hbSIsImlzVmVyaWZ5Ijp0cnVlLCJuYW1lIjoiSSdtIGFkbWluIiwidHlwZSI6IlNZU1RFTSIsInJvbGUiOiJBRE1JTiIsImdlbmRlciI6Ik1BTEUiLCJhZ2UiOjY5LCJpYXQiOjE3MTExMTY4MTEsImV4cCI6MTc5NzUxNjgxMX0.2vsrMkte1Nvn1Gj2CS2m0xBWyM2AWmEjAHgwdryqWaE"
-
+    const [meta, setMeta] = useState({
+        current: 1,
+        pageSize: 5,
+        pages: 0,
+        total: 0
+    });
+    const access_token = localStorage.getItem("access_token") as string;
     useEffect(() => {
         getData();
     }, [])
 
+    //get Data
     const getData = async () => {
         const res = await fetch(
-            "http://localhost:8000/api/v1/users/all",
+            `http://localhost:8000/api/v1/users?current=${meta.current}&pageSize=${meta.pageSize}`,
             {
                 headers: {
                     'Authorization': `Bearer ${access_token}`,
                     "Content-Type": "application/json"
-
                 },
             })
 
@@ -49,10 +54,49 @@ const UsersTable = () => {
             })
         }
         setListUsers(dataUsers.data.result);
+        setMeta({
+            current: dataUsers.data.meta.current,
+            pageSize: dataUsers.data.meta.pageSize,
+            pages: dataUsers.data.meta.pages,
+            total: dataUsers.data.meta.total
+        })
     }
 
-    const confirm = () => {
-        message.success('Click on Yes');
+    //Confirm delete User 
+    const confirm = async (user: Users) => {
+
+
+        const res = await fetch(
+            `http://localhost:8000/api/v1/users/${user._id} `,
+            {
+
+                headers: {
+                    'Authorization': `Bearer ${access_token}`,
+                    "Content-Type": "application/json"
+
+                },
+                method: "DELETE",
+            }
+        )
+        const dataPost = await res.json();
+
+
+        //check error
+        if (dataPost.data) {
+            await getData();
+            notification.success({
+
+                message: JSON.stringify(dataPost.message),
+                description: "Xóa người dùng thành công"
+            })
+        }
+        else {
+            notification.warning({
+
+                message: JSON.stringify(dataPost.message),
+                description: "Không thể thực hiện xóa người dùng"
+            })
+        }
     };
 
     // created columns database
@@ -78,17 +122,19 @@ const UsersTable = () => {
             render: (value, record) => {
                 return (
                     <div>
-                        <button onClick={() => {
-                            console.log("check data record: ", record),
-                                setIsUpdateModalOpen(true)
-                            setDataUpdateUser(record)
-                        }}
+                        <Button type="primary" ghost
+                            style={{ marginRight: 20 }}
+                            onClick={() => {
+                                console.log("check data record: ", record),
+                                    setIsUpdateModalOpen(true)
+                                setDataUpdateUser(record)
+                            }}
                         >
-                            Edit</button>
+                            Edit</Button>
                         <Popconfirm
                             title="Delete the Users"
                             description={`Are you sure to delete this user. name = ${record.name}?`}
-                            onConfirm={confirm}
+                            onConfirm={() => { confirm(record) }}
                             okText="Yes"
                             cancelText="No"
                         >
@@ -102,6 +148,35 @@ const UsersTable = () => {
 
 
     ]
+
+    //  handle Change Pagination
+    const handleOnchangePage = async (page: number, pagesize: number) => {
+
+        const res = await fetch(
+            `http://localhost:8000/api/v1/users?current=${page}&pageSize=${pagesize}`,
+            {
+                headers: {
+                    'Authorization': `Bearer ${access_token}`,
+                    "Content-Type": "application/json"
+                },
+            })
+
+        const dataUsers = await res.json();
+
+        //check data API reload
+        if (!dataUsers.data) {
+            notification.error({
+                message: JSON.stringify(dataUsers.message)
+            })
+        }
+        setListUsers(dataUsers.data.result);
+        setMeta({
+            current: dataUsers.data.meta.current,
+            pageSize: dataUsers.data.meta.pageSize,
+            pages: dataUsers.data.meta.pages,
+            total: dataUsers.data.meta.total
+        })
+    }
 
     return (
         <div>
@@ -123,7 +198,15 @@ const UsersTable = () => {
                 columns={columns}
                 dataSource={listUsers}
                 rowKey={"_id"}
+                pagination={{
+                    current: meta.current,
+                    pageSize: meta.pageSize,
+                    total: meta.total,
+                    showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+                    onChange: (page: number, pagesize: number) => handleOnchangePage(page, pagesize),
+                    showSizeChanger: true
 
+                }}
             ></Table>
 
             {/* Modal add users */}
@@ -142,7 +225,7 @@ const UsersTable = () => {
                 dataUpdateUsers={dataUpdateUsers}
                 setDataUpdateUser={setDataUpdateUser}
             />
-        </div>
+        </div >
     )
 }
 export default UsersTable;

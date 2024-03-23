@@ -22,7 +22,6 @@ const UpdateUsersModal = (props: DataUpdateUsers) => {
         isUpdateModalOpen, setIsUpdateModalOpen,
         dataUpdateUsers, setDataUpdateUser } = props;
 
-    console.log("check Data Update: ", dataUpdateUsers)
     //set default data in modal
     const handleCancel_setDefaultData = () => {
         setIsUpdateModalOpen(false);
@@ -81,7 +80,7 @@ const UpdateUsersModal = (props: DataUpdateUsers) => {
             notification.success({
 
                 message: JSON.stringify(dataPost.message),
-                description: "success"
+                description: "Chỉnh sửa người dùng thành công "
             })
             handleCancel_setDefaultData();
         }

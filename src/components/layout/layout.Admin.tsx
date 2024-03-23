@@ -1,7 +1,7 @@
 import { TeamOutlined, HomeOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Menu } from 'antd';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 
 const items: MenuProps['items'] = [
@@ -36,7 +36,38 @@ const Header: React.FC = () => {
     )
 };
 
+
 const LayoutAdmin = () => {
+
+    const getData = async () => {
+        const res = await fetch(
+            "http://localhost:8000/api/v1/auth/login",
+            {
+                headers: {
+                    "Content-Type": "application/json"
+
+                },
+                method: "POST",
+                body: JSON.stringify({
+                    username: "admin@gmail.com",
+                    password: "123456"
+                })
+            })
+        const dataUsers = await res.json();
+
+        //check data API reload
+        if (dataUsers.data) {
+            localStorage.setItem("access_token", dataUsers.data.access_token)
+        }
+
+    }
+
+    useEffect(() => {
+
+        getData();
+
+    }, [])
+
     return (
         <div>
             <Header />

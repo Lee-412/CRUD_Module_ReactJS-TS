@@ -63,7 +63,7 @@ const CreateUserModal = (props: dataProps_createModal) => {
             notification.success({
 
                 message: JSON.stringify(dataPost.message),
-                description: "success"
+                description: "Thêm mới người dùng thành công"
             })
             handleCancel_setDefaultData();
         }
