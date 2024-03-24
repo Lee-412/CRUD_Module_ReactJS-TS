@@ -1,6 +1,7 @@
-import { Input, Modal, notification } from "antd";
-import { useState } from "react";
+import { Form, FormProps, Input, InputNumber, Modal, Select, notification } from "antd";
 
+
+// interFace data Props
 interface dataProps_createModal {
     access_token: string;
     getData: any;
@@ -10,36 +11,25 @@ interface dataProps_createModal {
 
 const CreateUserModal = (props: dataProps_createModal) => {
 
-    const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [age, setAge] = useState("");
-    const [gender, setGender] = useState("");
-    const [address, setAddress] = useState("");
-    const [role, setRole] = useState("");
-
     const { access_token, getData,
         isCreateModalOpen, setIsCreateModalOpen } = props;
 
-    //set default data in modal
+    const { Option } = Select;
+    const [form] = Form.useForm();
+
+
+    //set default data in form and modal
     const handleCancel_setDefaultData = () => {
         setIsCreateModalOpen(false);
-        setName("");
-        setEmail("");
-        setPassword("");
-        setAge("");
-        setGender("");
-        setAddress("");
-        setRole("");
+        form.resetFields();
+
     }
 
-    // handle click Oke in modal
     // Update data, fetch API, check Error
-    const handleOk = async () => {
+    // handle submit data Form ant
+    const onFinish: FormProps["onFinish"] = async (values) => {
+        const { name, email, password, age, gender, address, role } = values;
         const dataUserInput = { name, email, password, age, gender, address, role }
-        console.log("Check data: ", dataUserInput);
-
-        // fetch API POST data 
         const res = await fetch(
             "http://localhost:8000/api/v1/users",
             {
@@ -76,65 +66,109 @@ const CreateUserModal = (props: dataProps_createModal) => {
         }
     };
 
+    // Validate message Email and number type
+    const validateMessages = {
+        required: 'Please input your ${label} ',
+        types: {
+            email: '${label} is not a valid email!',
+            number: '${label} is not a valid number!',
+        },
+        number: {
+            range: '${label} must be between ${min} and ${max}',
+        },
+    };
     return (
         <>
             {/* Create modal */}
             <Modal title="Add New Users"
                 open={isCreateModalOpen}
-                onOk={handleOk}
+                onOk={() => form.submit()}
                 onCancel={() => { handleCancel_setDefaultData(); }}
-                maskClosable={false}>
+                maskClosable={false}
+            >
+                {/* Form Create user Antd */}
+                <Form
+                    name="basic"
+                    onFinish={onFinish}
+                    layout="vertical"
+                    validateMessages={validateMessages}
+                    form={form}
+                >
+                    <Form.Item
+                        label="Name"
+                        name="name"
+                        rules={[{ required: true, message: 'Please input your name!' }]}
+                        style={{ marginBottom: "5px" }}
+                    >
+                        <Input />
+                    </Form.Item>
 
-                <div>
-                    <label>Name:</label>
-                    <Input
-                        value={name}
-                        onChange={(event) => setName(event.target.value)}
-                    />
-                </div>
-                <div>
-                    <label>Email:</label>
-                    <Input
-                        value={email}
-                        onChange={(event) => setEmail(event.target.value)}
-                    />
-                </div>
-                <div>
-                    <label>Password:</label>
-                    <Input
-                        value={password}
-                        onChange={(event) => setPassword(event.target.value)}
-                    />
-                </div>
-                <div>
-                    <label>Age:</label>
-                    <Input
-                        value={age}
-                        onChange={(event) => setAge(event.target.value)}
-                    />
-                </div>
-                <div>
-                    <label>Gender:</label>
-                    <Input
-                        value={gender}
-                        onChange={(event) => setGender(event.target.value)}
-                    />
-                </div>
-                <div>
-                    <label>Address:</label>
-                    <Input
-                        value={address}
-                        onChange={(event) => setAddress(event.target.value)}
-                    />
-                </div>
-                <div>
-                    <label>Role:</label>
-                    <Input
-                        value={role}
-                        onChange={(event) => setRole(event.target.value)}
-                    />
-                </div>
-            </Modal>
+                    <Form.Item
+
+                        label="Email"
+                        name="email"
+                        rules={[{ type: 'email', required: true }]}
+                        style={{ marginBottom: "5px" }}>
+                        <Input />
+                    </Form.Item>
+
+                    <Form.Item
+                        label="Password"
+                        name="password"
+                        rules={[{ required: true, message: 'Please input your password!' }]}
+                        style={{ marginBottom: "5px" }}
+                    >
+                        <Input.Password />
+                    </Form.Item>
+
+                    <Form.Item
+                        name='age'
+                        label="Age"
+                        rules={[{ required: true, type: 'number', min: 0, max: 150 }]}
+                        style={{ marginBottom: "5px" }}>
+                        <InputNumber style={{ width: "100%" }} />
+                    </Form.Item>
+
+                    <Form.Item
+                        label="Address"
+                        name="address"
+                        rules={[{ required: true, message: 'Please input your address!' }]}
+                        style={{ marginBottom: "5px" }}
+                    >
+                        <Input />
+                    </Form.Item>
+
+                    <Form.Item
+                        name="gender" label="Gender"
+                        rules={[{ required: true }]}
+                        style={{ marginBottom: "5px" }}>
+                        <Select
+                            placeholder="Select a option and change input text above"
+                            allowClear
+                        >
+                            <Option value="MALE">male</Option>
+                            <Option value="FEMALE">female</Option>
+                            <Option value="OTHER">other</Option>
+                        </Select>
+                    </Form.Item>
+
+                    <Form.Item
+                        name="role"
+                        label="Role"
+                        rules={[{ required: true }]}
+                        style={{ marginBottom: "5px" }}>
+                        <Select
+                            placeholder="Select a option and change input text above"
+                            allowClear
+                        >
+                            <Option value="ADMIN">Admin</Option>
+                            <Option value="USER">User</Option>
+                        </Select>
+                    </Form.Item>
+
+                </Form>
+
+            </Modal >
         </>
     )
 }

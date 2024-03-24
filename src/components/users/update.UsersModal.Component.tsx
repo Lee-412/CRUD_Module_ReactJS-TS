@@ -1,5 +1,5 @@
-import { Input, Modal, notification } from "antd";
-import { useEffect, useState } from "react";
+import { Form, FormProps, Input, InputNumber, Modal, Select, notification } from "antd";
+import { useEffect } from "react";
 import { Users } from "./users.table";
 interface DataUpdateUsers {
     access_token: string;
@@ -10,40 +10,33 @@ interface DataUpdateUsers {
     setDataUpdateUser: (v: null | Users) => void;
 }
 const UpdateUsersModal = (props: DataUpdateUsers) => {
-    const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [age, setAge] = useState("");
-    const [gender, setGender] = useState("");
-    const [address, setAddress] = useState("");
-    const [role, setRole] = useState("");
 
     const { access_token, getData,
         isUpdateModalOpen, setIsUpdateModalOpen,
         dataUpdateUsers, setDataUpdateUser } = props;
 
+    const { Option } = Select;
+    const [form] = Form.useForm();
+
     //set default data in modal
     const handleCancel_setDefaultData = () => {
         setIsUpdateModalOpen(false);
-        setName("");
-        setEmail("");
-        setPassword("");
-        setAge("");
-        setGender("");
-        setAddress("");
-        setRole("");
         setDataUpdateUser(null);
     }
 
     const fillDataUpdate = () => {
         if (dataUpdateUsers) {
-            setName(dataUpdateUsers.name);
-            setEmail(dataUpdateUsers.email);
-            setPassword(dataUpdateUsers.password);
-            setAge(dataUpdateUsers.age);
-            setGender(dataUpdateUsers.gender);
-            setAddress(dataUpdateUsers.address);
-            setRole(dataUpdateUsers.role);
+            form.setFieldsValue({
+                name: dataUpdateUsers.name,
+                email: dataUpdateUsers.email,
+                age: dataUpdateUsers.age,
+                gender: dataUpdateUsers.gender,
+                address: dataUpdateUsers.address,
+                role: dataUpdateUsers.role,
+            })
+        }
+        else {
+            //
         }
     }
 
@@ -51,106 +44,150 @@ const UpdateUsersModal = (props: DataUpdateUsers) => {
         fillDataUpdate();
     }, [dataUpdateUsers])
 
-    const handleOk = async () => {
+    // handle submit data Form ant
+    const onFinish: FormProps["onFinish"] = async (values) => {
+        const { name, email, age, gender, address, role } = values;
+        if (dataUpdateUsers) {
 
-        const data = {
-            _id: dataUpdateUsers?._id,
-            name, email, age, gender, role, address
-        }
-        // fetch API POST data 
-        const res = await fetch(
-            "http://localhost:8000/api/v1/users",
-            {
-                headers: {
-                    'Authorization': `Bearer ${access_token}`,
-                    "Content-Type": "application/json"
-
-                },
-                method: "PATCH",
-                body: JSON.stringify(
-                    data
-                )
+            const data = {
+                _id: dataUpdateUsers?._id,
+                name, email, age, gender, role, address
             }
-        )
-        const dataPost = await res.json();
+            // fetch API POST data 
+            const res = await fetch(
+                "http://localhost:8000/api/v1/users",
+                {
+                    headers: {
+                        'Authorization': `Bearer ${access_token}`,
+                        "Content-Type": "application/json"
 
-        //check error
-        if (dataPost.data) {
-            await getData();
-            notification.success({
+                    },
+                    method: "PATCH",
+                    body: JSON.stringify(
+                        data
+                    )
+                }
+            )
+            const dataPost = await res.json();
 
-                message: JSON.stringify(dataPost.message),
-                description: "Chỉnh sửa người dùng thành công "
-            })
-            handleCancel_setDefaultData();
-        }
-        else {
-            notification.warning({
-                message: JSON.stringify(dataPost.message),
-                description: "Thông tin nhập không chính xác"
-            })
+            //check error
+            if (dataPost.data) {
+                await getData();
+                notification.success({
+
+                    message: JSON.stringify(dataPost.message),
+                    description: "Chỉnh sửa người dùng thành công "
+                })
+                handleCancel_setDefaultData();
+            }
+            else {
+                notification.warning({
+                    message: JSON.stringify(dataPost.message),
+                    description: "Thông tin nhập không chính xác"
+                })
+            }
         }
     };
 
-
+    const validateMessages = {
+        required: 'Please input your ${label} ',
+        types: {
+            email: '${label} is not a valid email!',
+            number: '${label} is not a valid number!',
+        },
+        number: {
+            range: '${label} must be between ${min} and ${max}',
+        },
+    };
     return (
         <>
             <Modal title="Update Users"
                 open={isUpdateModalOpen}
-                onOk={handleOk}
+                onOk={() => form.submit()}
                 onCancel={() => { handleCancel_setDefaultData(); }}
                 maskClosable={false} >
+                <Form
+                    name="basic"
+                    onFinish={onFinish}
+                    layout="vertical"
+                    validateMessages={validateMessages}
+                    form={form}
+                >
+                    <Form.Item
+                        label="Name"
+                        name="name"
+                        rules={[{ required: true, message: 'Please input your name!' }]}
+                        style={{ marginBottom: "5px" }}
+                    >
+                        <Input />
+                    </Form.Item>
 
-                <div>
-                    <label>Name:</label>
-                    <Input
-                        value={name}
-                        onChange={(event) => setName(event.target.value)}
-                    />
-                </div>
-                <div>
-                    <label>Email:</label>
-                    <Input
-                        value={email}
-                        onChange={(event) => setEmail(event.target.value)}
-                    />
-                </div>
-                <div>
-                    <label>Password:</label>
-                    <Input
-                        disabled={true}
-                        value={password}
-                        onChange={(event) => setPassword(event.target.value)}
-                    />
-                </div>
-                <div>
-                    <label>Age:</label>
-                    <Input
-                        value={age}
-                        onChange={(event) => setAge(event.target.value)}
-                    />
-                </div>
-                <div>
-                    <label>Gender:</label>
-                    <Input
-                        value={gender}
-                        onChange={(event) => setGender(event.target.value)}
-                    />
-                </div>
-                <div>
-                    <label>Address:</label>
-                    <Input
-                        value={address}
-                        onChange={(event) => setAddress(event.target.value)}
-                    />
-                </div>
-                <div>
-                    <label>Role:</label>
-                    <Input
-                        value={role}
-                        onChange={(event) => setRole(event.target.value)}
-                    />
-                </div>
+                    <Form.Item
+
+                        label="Email"
+                        name="email"
+                        rules={[{ type: 'email', required: true }]}
+                        style={{ marginBottom: "5px" }}>
+                        <Input />
+                    </Form.Item>
+
+                    <Form.Item
+                        label="Password"
+                        name="password"
+                        rules={[{ required: dataUpdateUsers ? false : true, message: 'Please input your password!' }]}
+                        style={{ marginBottom: "5px" }}
+                    >
+                        <Input.Password
+                            disabled={dataUpdateUsers ? true : false}
+                        />
+                    </Form.Item>
+
+                    <Form.Item
+                        name='age'
+                        label="Age"
+                        rules={[{ required: true, type: 'number', min: 0, max: 150 }]}
+                        style={{ marginBottom: "5px" }}>
+                        <InputNumber style={{ width: "100%" }} />
+                    </Form.Item>
+
+                    <Form.Item
+                        label="Address"
+                        name="address"
+                        rules={[{ required: true, message: 'Please input your address!' }]}
+                        style={{ marginBottom: "5px" }}
+                    >
+                        <Input />
+                    </Form.Item>
+
+                    <Form.Item
+                        name="gender" label="Gender"
+                        rules={[{ required: true }]}
+                        style={{ marginBottom: "5px" }}>
+                        <Select
+                            placeholder="Select a option and change input text above"
+                            allowClear
+                        >
+                            <Option value="MALE">male</Option>
+                            <Option value="FEMALE">female</Option>
+                            <Option value="OTHER">other</Option>
+                        </Select>
+                    </Form.Item>
+
+                    <Form.Item
+                        name="role"
+                        label="Role"
+                        rules={[{ required: true }]}
+                        style={{ marginBottom: "5px" }}>
+                        <Select
+                            placeholder="Select a option and change input text above"
+                            allowClear
+                        >
+                            <Option value="ADMIN">Admin</Option>
+                            <Option value="USER">User</Option>
+                        </Select>
+                    </Form.Item>
+
+                </Form>
             </Modal >
         </>
     )

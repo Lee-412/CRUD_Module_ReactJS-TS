@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Table, Button, notification, Popconfirm, message } from 'antd';
+import { Table, Button, notification, Popconfirm } from 'antd';
 import type { TableColumnsType } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import CreateUserModal from "./create.UserModal.Component";
@@ -145,8 +145,6 @@ const UsersTable = () => {
                 )
             }
         }
-
-
     ]
 
     //  handle Change Pagination
