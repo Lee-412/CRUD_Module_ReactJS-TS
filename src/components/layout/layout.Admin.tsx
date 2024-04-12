@@ -1,4 +1,4 @@
-import { TeamOutlined, HomeOutlined } from '@ant-design/icons';
+import { TeamOutlined, HomeOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Menu } from 'antd';
 import { useEffect, useState } from 'react';
@@ -15,6 +15,12 @@ const items: MenuProps['items'] = [
         label: <Link to='/Users'>Manage Users</Link >,
         key: 'users',
         icon: <TeamOutlined />,
+        disabled: false,
+    },
+    {
+        label: <Link to='/Tracks'>Manage Tracks</Link >,
+        key: 'tracks    ',
+        icon: <UnorderedListOutlined />,
         disabled: false,
     },
 ];

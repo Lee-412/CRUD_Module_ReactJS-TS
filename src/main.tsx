@@ -8,6 +8,7 @@ import {
 
 import LayoutAdmin from './components/layout/layout.Admin.tsx';
 import React from 'react';
+import TracksPage from './screens/tracks.page.tsx';
 
 // router web
 const router = createBrowserRouter([
@@ -22,7 +23,7 @@ const router = createBrowserRouter([
       },
       {
         path: "tracks",
-        element: <div>Tracks audio</div>,
+        element: <TracksPage />,
       }
     ]
   },

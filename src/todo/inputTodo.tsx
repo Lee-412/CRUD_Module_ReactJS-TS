@@ -14,6 +14,7 @@ interface IProps {
     setListTodo: (v: string[]) => void;
     Todo: string;
     setTodo: (v: string) => void;
+    children: React.ReactNode;
 }
 
 // handle Input
@@ -35,7 +36,7 @@ const InputTodoComponent = (props: IProps) => {
     console.log(ListTodo)
     return (
         <div style={{ border: "1px solid red" }}>
-
+            {props.children}
             <p>Add input todo</p>
             <input type="text" name="" id="checks"
                 value={Todo}
@@ -52,6 +53,7 @@ const InputTodoComponent = (props: IProps) => {
 
             <button onClick={() => { props.testFunction(Todo) }}>test</button>
         </div>
+
     )
 
 }

@@ -3,10 +3,6 @@ import { useEffect, useState } from 'react';
 import InputTodoComponent from './todo/inputTodo'
 
 function App() {
-
-
-
-
   const [count, setCount] = useState(0);
   const name = "Lee";
   const age = 25;
@@ -43,8 +39,9 @@ function App() {
         setListTodo={setListTodo}
         Todo={Todo}
         setTodo={setTodo}
-      />
-
+      >
+        <span>Input componenet</span>
+      </InputTodoComponent>
       <ul>
         {
           ListTodo.map((item, index) => {
